@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "defines.h"
 #include "gamestate.h"
+#include "sea.h"
 
 #include "game.h"
 
@@ -33,9 +34,10 @@
 #define SHIP_MOVEMENT 20
 
 #define MAX_MAGIC 10
+#define MAGIC_RECOVERY_RATE 200
 
-#define MAGIC_BAR_X 32
-#define MAGIC_BAR_Y 120
+#define MAGIC_BAR_X 16
+#define MAGIC_BAR_Y 140
 
 // game variables
 
@@ -45,10 +47,26 @@ UBYTE ship_is_moving;
 BYTE ship_dx, ship_dy;
 BYTE ship_sgn_dx, ship_sgn_dy;
 
+// magic bar state
+
 // wizard magic, every sorcery uses up 1 magic;
 // if magic is <= 5 random storms may occur that
 // reposition the ship slightly
 UBYTE cur_magic;
+
+UBYTE magic_recovery_timer;
+
+// sea state
+UBYTE sea_y;
+
+void initGame()
+{
+	initVariables();
+	initSprites();
+
+	setGameBank(GAME_SEA_BANK);
+	initSea();
+}
 
 void initVariables()
 {
@@ -62,24 +80,7 @@ void initVariables()
 	setShipPosition(ship_x, ship_y);
 
 	cur_magic = 10;
-}
-
-void initBackground()
-{
-	/*disable_interrupts();
-	DISPLAY_OFF;
-
-	OBP0_REG = 0xD0U; // 11010000
-	BGP_REG = 0xE4U; // 11100100
-
-	HIDE_WIN;
-	SHOW_BKG;
-
-	set_bkg_data_rle(0U, tangram_data_length, tangram_data);
-	set_bkg_tiles_rle(0U, 0U, tangram_tiles_width, tangram_tiles_height, tangram_tiles);
-
-	DISPLAY_ON;
-	enable_interrupts();*/
+	magic_recovery_timer = 0;
 }
 
 void initSprites()
@@ -237,4 +238,22 @@ void updateGame()
 	}
 
 	handleInputs();
+
+	magic_recovery_timer++;
+	if (magic_recovery_timer == MAGIC_RECOVERY_RATE)
+	{
+		magic_recovery_timer = 0;
+
+		if (cur_magic != 10)
+		{
+			cur_magic++;
+			updateMagicBar();
+		}
+	}
+
+	// move sea background
+	sea_y--;
+
+	setGameBank(GAME_SEA_BANK);
+	setSeaPosition(0, sea_y);
 }

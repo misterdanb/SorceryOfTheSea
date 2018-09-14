@@ -13,8 +13,8 @@ include sounds.mk
 
 OBJ=main.o gamestate.o game.o mmlgb/driver/music.o mmlgb/driver/freq.o mmlgb/driver/noisefreq.o mmlgb/driver/vib.o
 
-OBJ_BANK1=
-OBJ_BANK2=
+OBJ_BANK1=sea.o
+OBJ_BANK2=title_screen.o
 OBJ_BANK3=
 OBJ_BANK4=
 OBJ_BANK5=

@@ -6,22 +6,25 @@
 #include "gamestate.h"
 #include "sound.h"
 
+#include "title_screen.h"
 #include "game.h"
 
 extern UBYTE mainmenu_song_data;
 
-void vblUpdate() {
+void vblUpdate()
+{
 	++vbl_count;
 }
 
-void main() {
+void main()
+{
 	disable_interrupts();
 
 	vbl_count = 0U;
 	joystate = oldjoystate = 0U;
 	level = 1U;
 
-	gamestate = GAMESTATE_GAME;
+	gamestate = GAMESTATE_TITLE_SCREEN;
 
 	SWITCH_16_8_MODE_MBC1;
 	add_TIM(updateMusic);
@@ -30,16 +33,14 @@ void main() {
 
 	enable_interrupts();
 
-	initBackground();
-	initSprites();
-
-	initVariables();
+	setGameBank(GAME_TITLE_SCREEN_BANK);
+	initTitleScreen();
 
 	setGameBank(10U);
 	snd_init();
 
 	setMusicBank(4U);
-	playMusic(&mainmenu_song_data);
+	//playMusic(&mainmenu_song_data);
 
 	while (1U)
 	{
@@ -47,7 +48,13 @@ void main() {
 
 		switch (gamestate)
 		{
-			case GAMESTATE_TITLE:
+			case GAMESTATE_TITLE_SCREEN:
+				if (CLICKED(J_START))
+				{
+					initGame();
+					gamestate = GAMESTATE_GAME;
+				}
+
 				/*if (CLICKED(J_A))
 				{
 					setGameBank(10U);

@@ -1,8 +1,9 @@
 #ifndef BKG_H
 #define BKG_H
 
+void initGame();
+
 void initVariables();
-void initBackground();
 void initSprites();
 
 void setShipPosition(UBYTE x, UBYTE y);

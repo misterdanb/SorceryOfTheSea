@@ -24,9 +24,10 @@ extern UBYTE game_bank, music_bank;
 #define RELEASED(x) (!(joystate & x) && (joystate & x) != (oldjoystate & x))
 #define ISDOWN(x) (joystate & (x))
 
-#define GAMESTATE_TITLE       0U
-#define GAMESTATE_GAME        1U
+#define GAMESTATE_TITLE_SCREEN 0U
+#define GAMESTATE_GAME         1U
 
-#define GAME_BACKGROUNDS_BANK 7U
+#define GAME_SEA_BANK          1U
+#define GAME_TITLE_SCREEN_BANK 2U
 
 #endif
