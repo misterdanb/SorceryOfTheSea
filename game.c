@@ -1,10 +1,11 @@
 #include <gb/gb.h>
+#include <stdio.h>
 #include "defines.h"
 #include "gamestate.h"
 
 #include "game.h"
 
-#include "data/bg/tangram.h"
+//#include "data/bg/tangram.h"
 #include "data/sprite/sprites.h"
 
 // sprite defines
@@ -15,6 +16,8 @@
 #define SHIP_RIGHT_SPRITE 22
 
 // game defines
+#define SHIP_MOVEMENT 20
+
 #define MAX_MAGIC 10
 
 // game variables
@@ -39,12 +42,14 @@ void initVariables()
 	ship_dx = 0;
 	ship_dy = 0;
 
+	setShipPosition(ship_x, ship_y);
+
 	cur_magic = 10;
 }
 
 void initBackground()
 {
-	disable_interrupts();
+	/*disable_interrupts();
 	DISPLAY_OFF;
 
 	OBP0_REG = 0xD0U; // 11010000
@@ -57,7 +62,7 @@ void initBackground()
 	set_bkg_tiles_rle(0U, 0U, tangram_tiles_width, tangram_tiles_height, tangram_tiles);
 
 	DISPLAY_ON;
-	enable_interrupts();
+	enable_interrupts();*/
 }
 
 void initSprites()
@@ -93,11 +98,56 @@ void setShipPosition(UBYTE x, UBYTE y)
 
 void pilotShip(BYTE dx, BYTE dy)
 {
-	ship_is_moving = TRUE;
-	ship_dx = dx;
-	ship_dy = dy;
-	ship_sgn_dx = dx < 0 ? -1 : +1;
-	ship_sgn_dy = dy < 0 ? -1 : +1;
+	// wizard can only make wind, if there
+	// is magic left
+	if (cur_magic > 0)
+	{
+		ship_is_moving = TRUE;
+		ship_dx = dx;
+		ship_dy = dy;
+		ship_sgn_dx = dx < 0 ? -1 : +1;
+		ship_sgn_dy = dy < 0 ? -1 : +1;
+
+		// wizard moved the ship by making wind,
+		// the magic reduces by 1
+		cur_magic -= 1;
+	}
+}
+
+void handleInputs()
+{
+	if (CLICKED(J_A))
+	{
+		BYTE new_ship_dx = 0, new_ship_dy = 0;
+		BYTE movement_initiated = FALSE;
+
+		if (ISDOWN(J_LEFT))
+		{
+			new_ship_dx = -SHIP_MOVEMENT;
+			movement_initiated = TRUE;
+		}
+		else if (ISDOWN(J_RIGHT))
+		{
+			new_ship_dx = SHIP_MOVEMENT;
+			movement_initiated = TRUE;
+		}
+
+		if (ISDOWN(J_UP))
+		{
+			new_ship_dy = -SHIP_MOVEMENT;
+			movement_initiated = TRUE;
+		}
+		else if (ISDOWN(J_DOWN))
+		{
+			new_ship_dy = SHIP_MOVEMENT;
+			movement_initiated = TRUE;
+		}
+
+		if (movement_initiated)
+		{
+			pilotShip(new_ship_dx, new_ship_dy);
+		}
+	}
 }
 
 void updateGame()
@@ -120,5 +170,9 @@ void updateGame()
 		{
 			ship_is_moving = FALSE;
 		}
+
+		setShipPosition(ship_x, ship_y);
 	}
+
+	handleInputs();
 }

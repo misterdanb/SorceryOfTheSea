@@ -30,9 +30,10 @@ void main() {
 
 	enable_interrupts();
 
-	initVariables();
 	initBackground();
 	initSprites();
+
+	initVariables();
 
 	setGameBank(10U);
 	snd_init();
