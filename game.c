@@ -15,10 +15,27 @@
 #define SHIP_LEFT_SPRITE  20
 #define SHIP_RIGHT_SPRITE 22
 
+// we show 5 magic bar elements, each can be filled half
+// or full, this makes 10 magic points in total
+#define MAGIC_BAR_LEFT_CORNER_ID  2
+#define MAGIC_BAR_RIGHT_CORNER_ID 3
+
+#define MAGIC_BAR_ID_OFFSET       4
+
+#define MAGIC_BAR_LEFT_CORNER_SPRITE   0
+#define MAGIC_BAR_RIGHT_CORNER_SPRITE  4
+
+#define MAGIC_BAR_ELEMENT_EMPTY_SPRITE 8
+#define MAGIC_BAR_ELEMENT_HALF_SPRITE  12
+#define MAGIC_BAR_ELEMENT_FULL_SPRITE  16
+
 // game defines
 #define SHIP_MOVEMENT 20
 
 #define MAX_MAGIC 10
+
+#define MAGIC_BAR_X 32
+#define MAGIC_BAR_Y 120
 
 // game variables
 
@@ -67,6 +84,8 @@ void initBackground()
 
 void initSprites()
 {
+	UBYTE i;
+
 	disable_interrupts();
 	DISPLAY_OFF;
 
@@ -83,6 +102,23 @@ void initSprites()
 	set_sprite_prop(SHIP_LEFT_ID, OBJ_PAL0);
 	set_sprite_prop(SHIP_RIGHT_ID, OBJ_PAL0);
 
+	// initialize magic bar	
+	set_sprite_tile(MAGIC_BAR_LEFT_CORNER_ID, MAGIC_BAR_LEFT_CORNER_SPRITE);
+	set_sprite_tile(MAGIC_BAR_RIGHT_CORNER_ID, MAGIC_BAR_RIGHT_CORNER_SPRITE);
+
+	set_sprite_prop(MAGIC_BAR_LEFT_CORNER_ID, OBJ_PAL0);
+	set_sprite_prop(MAGIC_BAR_RIGHT_CORNER_ID, OBJ_PAL0);
+
+	move_sprite(MAGIC_BAR_LEFT_CORNER_ID, MAGIC_BAR_X, MAGIC_BAR_Y);
+	move_sprite(MAGIC_BAR_RIGHT_CORNER_ID, MAGIC_BAR_X + (MAX_MAGIC / 2 + 1) * 8, MAGIC_BAR_Y);
+
+	for (i = 0; i < MAX_MAGIC / 2; i++)
+	{
+		set_sprite_tile(MAGIC_BAR_ID_OFFSET + i, MAGIC_BAR_ELEMENT_FULL_SPRITE);
+		set_sprite_prop(MAGIC_BAR_ID_OFFSET + i, OBJ_PAL0);
+		move_sprite(MAGIC_BAR_ID_OFFSET + i, MAGIC_BAR_X + (i + 1) * 8, MAGIC_BAR_Y);
+	}
+
 	DISPLAY_ON;
 	enable_interrupts();
 }
@@ -94,6 +130,31 @@ void setShipPosition(UBYTE x, UBYTE y)
 
 	move_sprite(SHIP_LEFT_ID, x, y);
 	move_sprite(SHIP_RIGHT_ID, x + 8, y);
+}
+
+void updateMagicBar()
+{
+	UBYTE i;
+
+	for (i = 0; i < MAX_MAGIC / 2; i++)
+	{
+		if (i * 2 < cur_magic)
+		{
+			// is cur_magic odd and is it the last element before empty elements?
+			if (i * 2 + 1 == cur_magic)
+			{
+				set_sprite_tile(MAGIC_BAR_ID_OFFSET + i, MAGIC_BAR_ELEMENT_HALF_SPRITE);
+			}
+			else
+			{
+				set_sprite_tile(MAGIC_BAR_ID_OFFSET + i, MAGIC_BAR_ELEMENT_FULL_SPRITE);
+			}
+		}
+		else
+		{
+			set_sprite_tile(MAGIC_BAR_ID_OFFSET + i, MAGIC_BAR_ELEMENT_EMPTY_SPRITE);
+		}
+	}
 }
 
 void pilotShip(BYTE dx, BYTE dy)
@@ -111,6 +172,7 @@ void pilotShip(BYTE dx, BYTE dy)
 		// wizard moved the ship by making wind,
 		// the magic reduces by 1
 		cur_magic -= 1;
+		updateMagicBar();
 	}
 }
 
