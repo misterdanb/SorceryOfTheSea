@@ -6,7 +6,7 @@
 #include "gamestate.h"
 #include "sound.h"
 
-#include "bkg.h"
+#include "game.h"
 
 extern UBYTE mainmenu_song_data;
 
@@ -21,7 +21,7 @@ void main() {
 	joystate = oldjoystate = 0U;
 	level = 1U;
 
-	gamestate = GAMESTATE_LOGOS;
+	gamestate = GAMESTATE_GAME;
 
 	SWITCH_16_8_MODE_MBC1;
 	add_TIM(updateMusic);
@@ -30,37 +30,41 @@ void main() {
 
 	enable_interrupts();
 
+	initVariables();
+	initBackground();
+	initSprites();
+
 	setGameBank(10U);
 	snd_init();
-
-	setGameBank(9U);
-	setTangram();
-	setSprites();
 
 	setMusicBank(4U);
 	playMusic(&mainmenu_song_data);
 
-	printf("%x %x\n", (&mainmenu_song_data)[0], (&mainmenu_song_data)[1]);
-
 	while (1U)
 	{
-		updateSprite(16 + (UBYTE) (vbl_count % 160), 16 + (UBYTE) (vbl_count % 144));
 		updateJoystate();
+
 		switch (gamestate)
 		{
-			case GAMESTATE_LOGOS:
-				if (CLICKED(J_A))
+			case GAMESTATE_TITLE:
+				/*if (CLICKED(J_A))
 				{
 					setGameBank(10U);
 					playSound(SFX_BUMP);
 					setGameBank(9U);
-				}
+				}*/
+				break;
+
+			case GAMESTATE_GAME:
+				updateGame();
 				break;
 		}
 
-		setGameBank(10U);
+		/*setGameBank(10U);
 		snd_update();
-		setGameBank(9U);
+		setGameBank(9U);*/
+
+		// end frame here?
 		wait_vbl_done();
 	}
 }
