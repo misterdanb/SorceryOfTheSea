@@ -3,6 +3,7 @@
 
 # Object files
 *.o
+*.sym
 *.ko
 *.obj
 *.elf
@@ -29,6 +30,7 @@
 *.dylib
 
 # Executables
+*.gb
 *.exe
 *.out
 *.app
