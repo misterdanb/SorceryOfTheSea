@@ -1,6 +1,7 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
+void updateJoystate();
 void setGameBank(UBYTE i);
 void setMusicBank(UBYTE i);
 void playMusic(UBYTE *data);
