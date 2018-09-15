@@ -26,7 +26,7 @@ void initWaves(UBYTE offset)
 
 void clearWaves()
 {
-	repairSea(loc_wave_1_tile_x, loc_wave_1_tile_y, wave_1_tiles_width, wave_1_tiles_height);
+	repairSea(loc_wave_1_tile_x, loc_wave_1_tile_y, 4, 4);
 }
 
 void setupWave1(UBYTE tile_x, UBYTE tile_y)

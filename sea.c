@@ -26,22 +26,21 @@ UBYTE initSea()
 	return sea_data_length;
 }
 
-void repairSea(UBYTE tile_x, UBYTE tile_y, UBYTE width, UBYTE height)
+void repairSea(UBYTE tile_x, UBYTE tile_y, UBYTE w, UBYTE h)
 {
-	UBYTE i, j;
-
 	disable_interrupts();
-	DISPLAY_OFF;
-
-	for (i = 0; i < width; i++)
+	//DISPLAY_OFF;
+	
+	if (tile_y % 2 == 0)
 	{
-		for (j = 0; j < height; j++)
-		{
-			set_bkg_tiles_rle(0U, tile_x + i, tile_y + j, 1U, 1U, &sea_tiles[(tile_y + j) * 32 + tile_x + i]);
-		}
+		set_bkg_tiles_rle(0U, 0U, tile_y, sea_tiles_width, 4U, sea_tiles);
+	}
+	else
+	{
+		set_bkg_tiles_rle(0U, 0U, tile_y + 1U, sea_tiles_width, 4U, sea_tiles);
 	}
 
-	DISPLAY_ON;
+	//DISPLAY_ON;
 	enable_interrupts();
 }
 

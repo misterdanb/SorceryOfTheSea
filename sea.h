@@ -3,7 +3,7 @@
 
 UBYTE initSea();
 
-void repairSea(UBYTE tile_x, UBYTE tile_y, UBYTE width, UBYTE height);
+void repairSea(UBYTE tile_x, UBYTE tile_y, UBYTE w, UBYTE h);
 
 void setSeaPosition(UBYTE x, UBYTE y);
 

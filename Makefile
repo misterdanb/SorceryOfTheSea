@@ -15,7 +15,7 @@ OBJ=main.o gamestate.o game.o mmlgb/driver/music.o mmlgb/driver/freq.o mmlgb/dri
 
 OBJ_BANK1=sea.o waves.o
 OBJ_BANK2=title_screen.o
-OBJ_BANK3=
+OBJ_BANK3=loosing_screen.o
 OBJ_BANK4=
 OBJ_BANK5=
 OBJ_BANK6=

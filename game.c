@@ -1,5 +1,4 @@
 #include <gb/gb.h>
-#include <stdio.h>
 #include "defines.h"
 #include "gamestate.h"
 #include "sea.h"
@@ -37,6 +36,7 @@
 
 #define WAVE_LEFT_SPRITE 24
 #define WAVE_RIGHT_SPRITE 26
+
 // game defines
 #define SHIP_MOVEMENT 16
 
@@ -45,6 +45,8 @@
 
 #define MAGIC_BAR_X 16
 #define MAGIC_BAR_Y 140
+
+#define MAX_WAVE_HIT_COUNT 8
 
 // game variables
 
@@ -57,9 +59,6 @@ BYTE ship_dx, ship_dy;
 BYTE ship_sgn_dx, ship_sgn_dy;
 
 // wave state
-UBYTE waves_speed;
-UBYTE waves_x, waves_y;
-
 UBYTE wave_1_tile_x, wave_1_tile_y;
 
 // magic bar state
@@ -71,8 +70,14 @@ UBYTE cur_magic;
 
 UBYTE magic_recovery_timer;
 
+UBYTE jump_attempted;
+UBYTE jumping;
+
 // sea state
 UBYTE sea_y;
+
+// dying
+UBYTE wave_hit_count;
 
 void initGame()
 {
@@ -84,8 +89,6 @@ void initGame()
 
 	setGameBank(GAME_WAVES_BANK);
 	initWaves(tile_data_offset);
-
-	clearWaves();
 
 	setupWave1(10, 10);
 }
@@ -103,12 +106,18 @@ void initVariables()
 
 	setShipPosition(ship_x, ship_y);
 
-	wave_1_tile_x = 16 + 160 / 2;
-	wave_1_tile_y = 255 - 32;
-	waves_speed = 1;
+	wave_1_tile_x = 8;
+	wave_1_tile_y = 8;
 
 	cur_magic = 10;
 	magic_recovery_timer = 0;
+
+	jump_attempted = FALSE;
+	jumping = 0;
+
+	sea_y = 0;
+
+	wave_hit_count = 0;
 }
 
 void initSprites()
@@ -148,19 +157,16 @@ void initSprites()
 		move_sprite(MAGIC_BAR_ID_OFFSET + i, MAGIC_BAR_X + (i + 1) * 8, MAGIC_BAR_Y);
 	}
 
-
-
-
 	DISPLAY_ON;
 	enable_interrupts();
 }
 
 void setShipPosition(UBYTE x, UBYTE y)
 {
-	if(x < 8) x = 8;
-	if(y < 16) y = 16;
-	if(x > 152) x = 152;
-	if(y > 144) y = 144;
+	if (x < 8) x = 8;
+	if (y < 16) y = 16;
+	if (x > 152) x = 152;
+	if (y > 144) y = 144;
 
 	ship_x = x;
 	ship_y = y;
@@ -248,10 +254,63 @@ void handleInputs()
 			pilotShip(new_ship_dx, new_ship_dy);
 		}
 	}
+
+	if (CLICKED(J_B))
+	{
+		if (cur_magic > 0)
+		{
+			// only jumps in the vicinity of a wave are allowed,
+			// so the wave_hit_count should be above 0
+			if (wave_hit_count > 0)
+			{
+				jump_attempted = TRUE;
+			}
+
+			cur_magic -= 1;
+			updateMagicBar();
+		}
+	}
+}
+
+void handleCollisions(UBYTE wave_diff)
+{
+	if (ship_y >= wave_diff && ship_y < (wave_diff + 1) + 4 * 8 &&
+	    ship_x >= wave_1_tile_x * 8 && ship_x < (wave_1_tile_x + 4 + 1) * 8)
+	{
+		if (wave_hit_count < MAX_WAVE_HIT_COUNT)
+		{
+			wave_hit_count++;
+		}
+		else
+		{
+			if (!jumping)
+			{
+				if (jump_attempted)
+				{
+					setShipPosition(ship_x, ship_y);
+
+					jump_attempted = FALSE;
+					jumping = 48;
+				}
+				else
+				{
+					// DEAD
+
+					ship_x = 8;
+					ship_y = 120;
+					setShipPosition(ship_x, ship_y);
+				}
+			}
+
+			wave_hit_count = 0;
+		}
+	}
 }
 
 void updateGame()
 {
+	UBYTE wave_diff;
+
 	if (ship_is_moving)
 	{
 		if (ship_dy != 0)
@@ -270,7 +329,6 @@ void updateGame()
 		{
 			ship_is_moving = FALSE;
 		}
-
 
 		setShipPosition(ship_x, ship_y);
 	}
@@ -292,11 +350,27 @@ void updateGame()
 	// move sea background
 	sea_y--;
 
+	wave_diff = wave_1_tile_y * 8 - sea_y;
+
+	if (wave_diff > 160U && wave_diff < 200U)
+	{
+		setGameBank(GAME_WAVES_BANK);
+		clearWaves();
+
+		wave_1_tile_x = (sea_y * 7) % 10;
+		wave_1_tile_y = (wave_1_tile_y + 6) % 32;
+
+		setupWave1(wave_1_tile_x, wave_1_tile_y);
+	}
+
+	handleCollisions(wave_diff);
+
+	if (jumping > 0)
+	{
+		setShipPosition(ship_x, ship_y - 3);
+		jumping -= 3;
+	}
+
 	setGameBank(GAME_SEA_BANK);
-	setSeaPosition(0, sea_y);
-
-	waves_y += waves_speed;
-
-	setGameBank(GAME_WAVES_BANK);
-	setWavesPosition(0, waves_y);
+	setSeaPosition(0, (UBYTE) sea_y);
 }
