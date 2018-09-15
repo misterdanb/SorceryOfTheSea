@@ -30,8 +30,14 @@
 #define MAGIC_BAR_ELEMENT_HALF_SPRITE  46
 #define MAGIC_BAR_ELEMENT_FULL_SPRITE  44
 
+// define Wave
+#define WAVE_LEFT_ID 10
+#define WAVE_RIGHT_ID 11
+
+#define WAVE_LEFT_SPRITE 24
+#define WAVE_RIGHT_SPRITE 26
 // game defines
-#define SHIP_MOVEMENT 20
+#define SHIP_MOVEMENT 16
 
 #define MAX_MAGIC 10
 #define MAGIC_RECOVERY_RATE 200
@@ -70,8 +76,9 @@ void initGame()
 
 void initVariables()
 {
-	ship_x = 16 + 160 / 2;
-	ship_y = 8 + 120;
+	//ship_x = 16 + 160 / 2;
+	ship_x = 88;
+	ship_y = 120;
 
 	ship_is_moving = FALSE;
 	ship_dx = 0;
@@ -120,12 +127,30 @@ void initSprites()
 		move_sprite(MAGIC_BAR_ID_OFFSET + i, MAGIC_BAR_X + (i + 1) * 8, MAGIC_BAR_Y);
 	}
 
+	// initialize WAVE
+	set_sprite_tile(WAVE_LEFT_ID, WAVE_LEFT_SPRITE);
+	set_sprite_tile(WAVE_RIGHT_ID, WAVE_RIGHT_SPRITE);
+
+	set_sprite_prop(WAVE_LEFT_ID, OBJ_PAL0);
+	set_sprite_prop(WAVE_RIGHT_ID, OBJ_PAL0);
+
+	move_sprite(WAVE_LEFT_ID, 8, 16);
+	move_sprite(WAVE_RIGHT_ID, 16, 16);
+
+
+
+
 	DISPLAY_ON;
 	enable_interrupts();
 }
 
 void setShipPosition(UBYTE x, UBYTE y)
 {
+	if(x < 8) x = 8;
+	if(y < 16) y = 16;
+	if(x > 152) x = 152;
+	if(y > 144) y = 144;
+
 	ship_x = x;
 	ship_y = y;
 
@@ -165,6 +190,7 @@ void pilotShip(BYTE dx, BYTE dy)
 	if (cur_magic > 0)
 	{
 		ship_is_moving = TRUE;
+
 		ship_dx = dx;
 		ship_dy = dy;
 		ship_sgn_dx = dx < 0 ? -1 : +1;
@@ -233,6 +259,7 @@ void updateGame()
 		{
 			ship_is_moving = FALSE;
 		}
+
 
 		setShipPosition(ship_x, ship_y);
 	}
