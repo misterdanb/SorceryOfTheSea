@@ -13,8 +13,8 @@
 #define SHIP_LEFT_ID  0
 #define SHIP_RIGHT_ID 1
 
-#define SHIP_LEFT_SPRITE  20
-#define SHIP_RIGHT_SPRITE 22
+#define SHIP_LEFT_SPRITE  0
+#define SHIP_RIGHT_SPRITE 2
 
 // we show 5 magic bar elements, each can be filled half
 // or full, this makes 10 magic points in total
@@ -23,12 +23,12 @@
 
 #define MAGIC_BAR_ID_OFFSET       4
 
-#define MAGIC_BAR_LEFT_CORNER_SPRITE   0
-#define MAGIC_BAR_RIGHT_CORNER_SPRITE  4
+#define MAGIC_BAR_LEFT_CORNER_SPRITE   40
+#define MAGIC_BAR_RIGHT_CORNER_SPRITE  42
 
-#define MAGIC_BAR_ELEMENT_EMPTY_SPRITE 8
-#define MAGIC_BAR_ELEMENT_HALF_SPRITE  12
-#define MAGIC_BAR_ELEMENT_FULL_SPRITE  16
+#define MAGIC_BAR_ELEMENT_EMPTY_SPRITE 48
+#define MAGIC_BAR_ELEMENT_HALF_SPRITE  46
+#define MAGIC_BAR_ELEMENT_FULL_SPRITE  44
 
 // game defines
 #define SHIP_MOVEMENT 20
@@ -103,7 +103,7 @@ void initSprites()
 	set_sprite_prop(SHIP_LEFT_ID, OBJ_PAL0);
 	set_sprite_prop(SHIP_RIGHT_ID, OBJ_PAL0);
 
-	// initialize magic bar	
+	// initialize magic bar
 	set_sprite_tile(MAGIC_BAR_LEFT_CORNER_ID, MAGIC_BAR_LEFT_CORNER_SPRITE);
 	set_sprite_tile(MAGIC_BAR_RIGHT_CORNER_ID, MAGIC_BAR_RIGHT_CORNER_SPRITE);
 
