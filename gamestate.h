@@ -9,7 +9,9 @@ void updateMusic();
 void stopMusic();
 
 void set_bkg_data_rle(UBYTE first, UBYTE n, UBYTE *data);
-void set_bkg_tiles_rle(UBYTE x, UBYTE y, UBYTE width, UBYTE height, UBYTE *tiles);
+void set_bkg_tiles_rle(UBYTE tile_data_offset, UBYTE x, UBYTE y, UBYTE width, UBYTE height, UBYTE *tiles);
+void set_win_data_rle(UBYTE first, UBYTE n, UBYTE *data);
+void set_win_tiles_rle(UBYTE tile_data_offset, UBYTE x, UBYTE y, UBYTE width, UBYTE height, UBYTE *tiles);
 
 extern UBYTE vbl_count;
 extern UBYTE level;
@@ -28,6 +30,8 @@ extern UBYTE game_bank, music_bank;
 #define GAMESTATE_GAME         1U
 
 #define GAME_SEA_BANK          1U
+#define GAME_WAVES_BANK        1U
+
 #define GAME_TITLE_SCREEN_BANK 2U
 
 #endif

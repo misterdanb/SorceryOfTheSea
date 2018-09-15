@@ -3,6 +3,7 @@
 #include "defines.h"
 #include "gamestate.h"
 #include "sea.h"
+#include "waves.h"
 
 #include "game.h"
 
@@ -47,11 +48,19 @@
 
 // game variables
 
+UBYTE tile_data_offset;
+
 // ship state
 UBYTE ship_x, ship_y;
 UBYTE ship_is_moving;
 BYTE ship_dx, ship_dy;
 BYTE ship_sgn_dx, ship_sgn_dy;
+
+// wave state
+UBYTE waves_speed;
+UBYTE waves_x, waves_y;
+
+UBYTE wave_1_tile_x, wave_1_tile_y;
 
 // magic bar state
 
@@ -71,12 +80,20 @@ void initGame()
 	initSprites();
 
 	setGameBank(GAME_SEA_BANK);
-	initSea();
+	tile_data_offset = initSea();
+
+	setGameBank(GAME_WAVES_BANK);
+	initWaves(tile_data_offset);
+
+	clearWaves();
+
+	setupWave1(10, 10);
 }
 
 void initVariables()
 {
-	//ship_x = 16 + 160 / 2;
+	tile_data_offset = 0;
+
 	ship_x = 88;
 	ship_y = 120;
 
@@ -85,6 +102,10 @@ void initVariables()
 	ship_dy = 0;
 
 	setShipPosition(ship_x, ship_y);
+
+	wave_1_tile_x = 16 + 160 / 2;
+	wave_1_tile_y = 255 - 32;
+	waves_speed = 1;
 
 	cur_magic = 10;
 	magic_recovery_timer = 0;
@@ -283,4 +304,9 @@ void updateGame()
 
 	setGameBank(GAME_SEA_BANK);
 	setSeaPosition(0, sea_y);
+
+	waves_y += waves_speed;
+
+	setGameBank(GAME_WAVES_BANK);
+	setWavesPosition(0, waves_y);
 }

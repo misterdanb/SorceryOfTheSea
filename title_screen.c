@@ -18,7 +18,7 @@ void initTitleScreen()
 	SHOW_BKG;
 
 	set_bkg_data_rle(0U, title_screen_data_length, title_screen_data);
-	set_bkg_tiles_rle(0U, 0U, title_screen_tiles_width, title_screen_tiles_height, title_screen_tiles);
+	set_bkg_tiles_rle(0U, 0U, 0U, title_screen_tiles_width, title_screen_tiles_height, title_screen_tiles);
 
 	move_bkg(0, 0);
 

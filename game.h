@@ -1,5 +1,5 @@
-#ifndef BKG_H
-#define BKG_H
+#ifndef GAME_H
+#define GAME_H
 
 void initGame();
 
