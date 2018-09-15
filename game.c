@@ -148,16 +148,6 @@ void initSprites()
 		move_sprite(MAGIC_BAR_ID_OFFSET + i, MAGIC_BAR_X + (i + 1) * 8, MAGIC_BAR_Y);
 	}
 
-	// initialize WAVE
-	set_sprite_tile(WAVE_LEFT_ID, WAVE_LEFT_SPRITE);
-	set_sprite_tile(WAVE_RIGHT_ID, WAVE_RIGHT_SPRITE);
-
-	set_sprite_prop(WAVE_LEFT_ID, OBJ_PAL0);
-	set_sprite_prop(WAVE_RIGHT_ID, OBJ_PAL0);
-
-	move_sprite(WAVE_LEFT_ID, 8, 16);
-	move_sprite(WAVE_RIGHT_ID, 16, 16);
-
 
 
 
