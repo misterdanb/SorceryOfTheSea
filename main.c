@@ -40,7 +40,7 @@ void main()
 	snd_init();
 
 	setMusicBank(4U);
-	//playMusic(&mainmenu_song_data);
+	playMusic(&mainmenu_song_data);
 
 	while (1U)
 	{
