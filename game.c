@@ -41,7 +41,7 @@
 // game defines
 #define SHIP_MOVEMENT 16
 
-#define MAX_MAGIC 10
+#define MAX_MAGIC 14
 #define MAGIC_RECOVERY_RATE 200
 
 #define MAGIC_BAR_X 16
@@ -88,6 +88,8 @@ void initGame()
 {
 	initVariables();
 	initSprites();
+
+	updateMagicBar();
 
 	setGameBank(GAME_SEA_BANK);
 	tile_data_offset = initSea();
@@ -156,9 +158,9 @@ void initSprites()
 	set_sprite_prop(MAGIC_BAR_RIGHT_CORNER_ID, OBJ_PAL0);
 
 	move_sprite(MAGIC_BAR_LEFT_CORNER_ID, MAGIC_BAR_X, MAGIC_BAR_Y);
-	move_sprite(MAGIC_BAR_RIGHT_CORNER_ID, MAGIC_BAR_X + (MAX_MAGIC / 2 + 1) * 8, MAGIC_BAR_Y);
+	move_sprite(MAGIC_BAR_RIGHT_CORNER_ID, MAGIC_BAR_X + (MAX_MAGIC / 2 - 1) * 8, MAGIC_BAR_Y);
 
-	for (i = 0; i < MAX_MAGIC / 2; i++)
+	for (i = 0; i < MAX_MAGIC / 2 - 2; i++)
 	{
 		set_sprite_tile(MAGIC_BAR_ID_OFFSET + i, MAGIC_BAR_ELEMENT_FULL_SPRITE);
 		set_sprite_prop(MAGIC_BAR_ID_OFFSET + i, OBJ_PAL0);
@@ -230,34 +232,37 @@ void pilotShip(BYTE dx, BYTE dy)
 
 void handleInputs()
 {
-	BYTE new_ship_dx = 0, new_ship_dy = 0;
-	BYTE movement_initiated = FALSE;
-
-	if (CLICKED(J_LEFT))
+	if (!ship_is_moving)
 	{
-		new_ship_dx = -SHIP_MOVEMENT;
-		movement_initiated = TRUE;
-	}
-	else if (CLICKED(J_RIGHT))
-	{
-		new_ship_dx = SHIP_MOVEMENT;
-		movement_initiated = TRUE;
-	}
-
-	if (CLICKED(J_UP))
-	{
-		new_ship_dy = -SHIP_MOVEMENT;
-		movement_initiated = TRUE;
-	}
-	else if (CLICKED(J_DOWN))
-	{
-		new_ship_dy = SHIP_MOVEMENT;
-		movement_initiated = TRUE;
-	}
-
-	if (movement_initiated)
-	{
-		pilotShip(new_ship_dx, new_ship_dy);
+		BYTE new_ship_dx = 0, new_ship_dy = 0;
+		BYTE movement_initiated = FALSE;
+	
+		if (CLICKED(J_LEFT))
+		{
+			new_ship_dx = -SHIP_MOVEMENT;
+			movement_initiated = TRUE;
+		}
+		else if (CLICKED(J_RIGHT))
+		{
+			new_ship_dx = SHIP_MOVEMENT;
+			movement_initiated = TRUE;
+		}
+	
+		if (CLICKED(J_UP))
+		{
+			new_ship_dy = -SHIP_MOVEMENT;
+			movement_initiated = TRUE;
+		}
+		else if (CLICKED(J_DOWN))
+		{
+			new_ship_dy = SHIP_MOVEMENT;
+			movement_initiated = TRUE;
+		}
+	
+		if (movement_initiated)
+		{
+			pilotShip(new_ship_dx, new_ship_dy);
+		}
 	}
 
 	if (CLICKED(J_B))
@@ -375,6 +380,16 @@ void updateGame()
 	{
 		setShipPosition(ship_x, ship_y - 3);
 		jumping -= 3;
+	}
+
+	if (cur_magic < 5 && (sea_y * 11) % 83 == 0 && !ship_is_moving)
+	{
+		ship_is_moving = TRUE;
+
+		ship_dx = (sea_y % 3 - 1) * 20;
+		ship_dy = ((sea_y * 17) % 3 - 1) * 20;
+		ship_sgn_dx = ship_dx < 0 ? -1 : +1;
+		ship_sgn_dy = ship_dy < 0 ? -1 : +1;
 	}
 
 	setGameBank(GAME_SEA_BANK);
