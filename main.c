@@ -11,6 +11,8 @@
 
 extern UBYTE mainmenu_song_data;
 
+UBYTE loosing_screen_initialized;
+
 void vblUpdate()
 {
 	++vbl_count;
@@ -18,6 +20,8 @@ void vblUpdate()
 
 void main()
 {
+	loosing_screen_initialized = FALSE;
+
 	disable_interrupts();
 
 	vbl_count = 0U;
@@ -65,6 +69,25 @@ void main()
 
 			case GAMESTATE_GAME:
 				updateGame();
+				break;
+
+			case GAMESTATE_LOST:
+				if (!loosing_screen_initialized)
+				{
+					setGameBank(GAME_LOOSING_SCREEN_BANK);
+					initLoosingScreen();
+
+					loosing_screen_initialized = TRUE;
+				}
+
+				if (CLICKED(J_START))
+				{
+					initGame();
+					gamestate = GAMESTATE_GAME;
+
+					loosing_screen_initialized = FALSE;
+				}
+
 				break;
 		}
 

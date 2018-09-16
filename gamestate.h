@@ -28,10 +28,12 @@ extern UBYTE game_bank, music_bank;
 
 #define GAMESTATE_TITLE_SCREEN 0U
 #define GAMESTATE_GAME         1U
+#define GAMESTATE_LOST         2U
 
-#define GAME_SEA_BANK          1U
-#define GAME_WAVES_BANK        1U
+#define GAME_SEA_BANK            1U
+#define GAME_WAVES_BANK          1U
 
-#define GAME_TITLE_SCREEN_BANK 2U
+#define GAME_TITLE_SCREEN_BANK   2U
+#define GAME_LOOSING_SCREEN_BANK 3U
 
 #endif

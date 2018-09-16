@@ -3,6 +3,7 @@
 #include "gamestate.h"
 #include "sea.h"
 #include "waves.h"
+#include "loosing_screen.h"
 
 #include "game.h"
 
@@ -49,6 +50,7 @@
 #define MAX_WAVE_HIT_COUNT 8
 
 // game variables
+extern UBYTE gamestate;
 
 UBYTE tile_data_offset;
 
@@ -73,6 +75,9 @@ UBYTE magic_recovery_timer;
 UBYTE jump_attempted;
 UBYTE jumping;
 
+UBYTE point_counter;
+UINT16 points;
+
 // sea state
 UBYTE sea_y;
 
@@ -90,7 +95,7 @@ void initGame()
 	setGameBank(GAME_WAVES_BANK);
 	initWaves(tile_data_offset);
 
-	setupWave1(10, 10);
+	setupWave1(wave_1_tile_x, wave_1_tile_y);
 }
 
 void initVariables()
@@ -107,13 +112,16 @@ void initVariables()
 	setShipPosition(ship_x, ship_y);
 
 	wave_1_tile_x = 8;
-	wave_1_tile_y = 8;
+	wave_1_tile_y = 0;
 
 	cur_magic = 10;
 	magic_recovery_timer = 0;
 
 	jump_attempted = FALSE;
 	jumping = 0;
+
+	point_counter = 0;
+	points = 0;
 
 	sea_y = 0;
 
@@ -222,37 +230,34 @@ void pilotShip(BYTE dx, BYTE dy)
 
 void handleInputs()
 {
-	if (CLICKED(J_A))
+	BYTE new_ship_dx = 0, new_ship_dy = 0;
+	BYTE movement_initiated = FALSE;
+
+	if (CLICKED(J_LEFT))
 	{
-		BYTE new_ship_dx = 0, new_ship_dy = 0;
-		BYTE movement_initiated = FALSE;
+		new_ship_dx = -SHIP_MOVEMENT;
+		movement_initiated = TRUE;
+	}
+	else if (CLICKED(J_RIGHT))
+	{
+		new_ship_dx = SHIP_MOVEMENT;
+		movement_initiated = TRUE;
+	}
 
-		if (ISDOWN(J_LEFT))
-		{
-			new_ship_dx = -SHIP_MOVEMENT;
-			movement_initiated = TRUE;
-		}
-		else if (ISDOWN(J_RIGHT))
-		{
-			new_ship_dx = SHIP_MOVEMENT;
-			movement_initiated = TRUE;
-		}
+	if (CLICKED(J_UP))
+	{
+		new_ship_dy = -SHIP_MOVEMENT;
+		movement_initiated = TRUE;
+	}
+	else if (CLICKED(J_DOWN))
+	{
+		new_ship_dy = SHIP_MOVEMENT;
+		movement_initiated = TRUE;
+	}
 
-		if (ISDOWN(J_UP))
-		{
-			new_ship_dy = -SHIP_MOVEMENT;
-			movement_initiated = TRUE;
-		}
-		else if (ISDOWN(J_DOWN))
-		{
-			new_ship_dy = SHIP_MOVEMENT;
-			movement_initiated = TRUE;
-		}
-
-		if (movement_initiated)
-		{
-			pilotShip(new_ship_dx, new_ship_dy);
-		}
+	if (movement_initiated)
+	{
+		pilotShip(new_ship_dx, new_ship_dy);
 	}
 
 	if (CLICKED(J_B))
@@ -295,10 +300,11 @@ void handleCollisions(UBYTE wave_diff)
 				else
 				{
 					// DEAD
+					gamestate = GAMESTATE_LOST;
 
-					ship_x = 8;
+					/*ship_x = 8;
 					ship_y = 120;
-					setShipPosition(ship_x, ship_y);
+					setShipPosition(ship_x, ship_y);*/
 				}
 			}
 
@@ -348,7 +354,7 @@ void updateGame()
 	}
 
 	// move sea background
-	sea_y--;
+	sea_y -= points / 10 + 1;
 
 	wave_diff = wave_1_tile_y * 8 - sea_y;
 
@@ -357,7 +363,7 @@ void updateGame()
 		setGameBank(GAME_WAVES_BANK);
 		clearWaves();
 
-		wave_1_tile_x = (sea_y * 7) % 10;
+		wave_1_tile_x = (sea_y * 7) % 17;
 		wave_1_tile_y = (wave_1_tile_y + 6) % 32;
 
 		setupWave1(wave_1_tile_x, wave_1_tile_y);
@@ -373,4 +379,9 @@ void updateGame()
 
 	setGameBank(GAME_SEA_BANK);
 	setSeaPosition(0, (UBYTE) sea_y);
+
+	if (++point_counter == 0)
+	{
+		points++;
+	}
 }

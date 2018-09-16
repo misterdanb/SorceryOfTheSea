@@ -1,5 +1,5 @@
-#ifndef TITLE_SCREEN_H
-#define TITLE_SCREEN_H
+#ifndef LoOSING_SCREEN_H
+#define LOOSING_SCREEN_H
 
 void initLoosingScreen();
 
