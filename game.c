@@ -171,8 +171,51 @@ void initSprites()
 		move_sprite(MAGIC_BAR_ID_OFFSET + i, MAGIC_BAR_X + (i + 1) * 8, MAGIC_BAR_Y);
 	}
 
+	// points
+	set_sprite_tile(20, 0);
+	set_sprite_tile(21, 0);
+	set_sprite_tile(22, 0);
+	set_sprite_tile(23, 0);
+	set_sprite_tile(24, 0);
+	set_sprite_tile(25, 0);
+
+	set_sprite_prop(20, OBJ_PAL0);
+	set_sprite_prop(21, OBJ_PAL0);
+	set_sprite_prop(22, OBJ_PAL0);
+	set_sprite_prop(23, OBJ_PAL0);
+	set_sprite_prop(24, OBJ_PAL0);
+	set_sprite_prop(25, OBJ_PAL0);
+
+	move_sprite(20, 120 - 16, 16);
+	move_sprite(21, 128 - 16, 16);
+	move_sprite(22, 136 - 16, 16);
+	move_sprite(23, 144 - 16, 16);
+	move_sprite(24, 152 - 16, 16);
+	move_sprite(25, 160 - 16, 16);
+
 	DISPLAY_ON;
 	enable_interrupts();
+}
+
+void updatePoints()
+{
+	UBYTE hundrets, tens, ones;
+	UBYTE offset;
+
+	offset = 16 * 4;
+
+	hundrets = points / 100;
+	tens = points / 10 - hundrets * 10;
+	ones = points - tens * 10 - hundrets * 100;
+
+	set_sprite_tile(20, offset + hundrets * 4);
+	set_sprite_tile(21, offset + hundrets * 4 + 2);
+
+	set_sprite_tile(22, offset + tens * 4);
+	set_sprite_tile(23, offset + tens * 4 + 2);
+
+	set_sprite_tile(24, offset + ones * 4);
+	set_sprite_tile(25, offset + ones * 4 + 2);
 }
 
 void setShipPosition(UBYTE x, UBYTE y)
@@ -416,5 +459,6 @@ void updateGame()
 	if (++point_counter == 0)
 	{
 		points++;
+		updatePoints();
 	}
 }
