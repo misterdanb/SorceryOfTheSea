@@ -4,7 +4,6 @@
 #include "main.h"
 
 #include "gamestate.h"
-#include "sound.h"
 
 #include "title_screen.h"
 #include "game.h"
@@ -39,9 +38,6 @@ void main()
 
 	setGameBank(GAME_TITLE_SCREEN_BANK);
 	initTitleScreen();
-
-	setGameBank(10U);
-	snd_init();
 
 	setMusicBank(4U);
 	playMusic(&mainmenu_song_data);

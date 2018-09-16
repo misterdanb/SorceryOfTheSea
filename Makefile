@@ -22,9 +22,9 @@ OBJ_BANK6=
 OBJ_BANK7=
 OBJ_BANK8=
 OBJ_BANK9=
-OBJ_BANK10=sound.o sound_data.o
+OBJ_BANK10=
 
-OBJ_ASM=title_song.o mainmenu_song.o
+OBJ_ASM=mainmenu_song.o
 
 $(OBJ_BANK1): CFLAGS+=-Wf-bo1
 $(OBJ_BANK2): CFLAGS+=-Wf-bo2
