@@ -11,8 +11,8 @@
 #include "data/sprite/sprites.h"
 
 // sprite defines
-#define SHIP_LEFT_ID  0
-#define SHIP_RIGHT_ID 1
+//#define SHIP_LEFT_ID  0
+//#define SHIP_RIGHT_ID 1
 
 #define SHIP_LEFT_SPRITE  0
 #define SHIP_RIGHT_SPRITE 2
@@ -51,6 +51,10 @@
 
 // game variables
 extern UBYTE gamestate;
+
+// sprite defines shiff
+UBYTE SHIP_LEFT_ID  =0;
+UBYTE SHIP_RIGHT_ID = 1;
 
 UBYTE tile_data_offset;
 
@@ -236,18 +240,32 @@ void handleInputs()
 	{
 		BYTE new_ship_dx = 0, new_ship_dy = 0;
 		BYTE movement_initiated = FALSE;
-	
+
 		if (CLICKED(J_LEFT))
 		{
 			new_ship_dx = -SHIP_MOVEMENT;
 			movement_initiated = TRUE;
+
+			set_sprite_prop(SHIP_LEFT_ID, FLIP_X);
+			set_sprite_prop(SHIP_RIGHT_ID, FLIP_X);
+
+			SHIP_LEFT_ID = 1;
+			SHIP_RIGHT_ID = 0;
+
+
 		}
 		else if (CLICKED(J_RIGHT))
 		{
 			new_ship_dx = SHIP_MOVEMENT;
 			movement_initiated = TRUE;
+
+			set_sprite_prop(SHIP_LEFT_ID, OBJ_PAL0);
+			set_sprite_prop(SHIP_RIGHT_ID, OBJ_PAL0);
+
+			SHIP_LEFT_ID = 0;
+			SHIP_RIGHT_ID = 1;
 		}
-	
+
 		if (CLICKED(J_UP))
 		{
 			new_ship_dy = -SHIP_MOVEMENT;
@@ -258,7 +276,7 @@ void handleInputs()
 			new_ship_dy = SHIP_MOVEMENT;
 			movement_initiated = TRUE;
 		}
-	
+
 		if (movement_initiated)
 		{
 			pilotShip(new_ship_dx, new_ship_dy);
