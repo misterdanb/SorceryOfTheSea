@@ -172,12 +172,12 @@ void initSprites()
 	}
 
 	// points
-	set_sprite_tile(20, 0);
-	set_sprite_tile(21, 0);
-	set_sprite_tile(22, 0);
-	set_sprite_tile(23, 0);
-	set_sprite_tile(24, 0);
-	set_sprite_tile(25, 0);
+	set_sprite_tile(20, 16 * 4);
+	set_sprite_tile(21, 16 * 4 + 2);
+	set_sprite_tile(22, 16 * 4);
+	set_sprite_tile(23, 16 * 4 + 2);
+	set_sprite_tile(24, 16 * 4);
+	set_sprite_tile(25, 16 * 4 + 2);
 
 	set_sprite_prop(20, OBJ_PAL0);
 	set_sprite_prop(21, OBJ_PAL0);
@@ -289,24 +289,22 @@ void handleInputs()
 			new_ship_dx = -SHIP_MOVEMENT;
 			movement_initiated = TRUE;
 
-			set_sprite_prop(SHIP_LEFT_ID, FLIP_X);
+			/*set_sprite_prop(SHIP_LEFT_ID, FLIP_X);
 			set_sprite_prop(SHIP_RIGHT_ID, FLIP_X);
 
 			SHIP_LEFT_ID = 1;
-			SHIP_RIGHT_ID = 0;
-
-
+			SHIP_RIGHT_ID = 0;*/
 		}
 		else if (CLICKED(J_RIGHT))
 		{
 			new_ship_dx = SHIP_MOVEMENT;
 			movement_initiated = TRUE;
 
-			set_sprite_prop(SHIP_LEFT_ID, OBJ_PAL0);
+			/*set_sprite_prop(SHIP_LEFT_ID, OBJ_PAL0);
 			set_sprite_prop(SHIP_RIGHT_ID, OBJ_PAL0);
 
 			SHIP_LEFT_ID = 0;
-			SHIP_RIGHT_ID = 1;
+			SHIP_RIGHT_ID = 1;*/
 		}
 
 		if (CLICKED(J_UP))
@@ -395,6 +393,23 @@ void updateGame()
 		{
 			ship_x += ship_sgn_dx;
 			ship_dx -= ship_sgn_dx;
+		}
+
+		if (ship_dx < 0)
+		{
+			set_sprite_tile(SHIP_LEFT_ID, SHIP_LEFT_SPRITE);
+			set_sprite_tile(SHIP_RIGHT_ID, SHIP_RIGHT_SPRITE);
+
+			set_sprite_prop(SHIP_LEFT_ID, OBJ_PAL0);
+			set_sprite_prop(SHIP_RIGHT_ID, OBJ_PAL0);
+		}
+		else
+		{
+			set_sprite_tile(SHIP_LEFT_ID, SHIP_RIGHT_SPRITE);
+			set_sprite_tile(SHIP_RIGHT_ID, SHIP_LEFT_SPRITE);
+
+			set_sprite_prop(SHIP_LEFT_ID, FLIP_X);
+			set_sprite_prop(SHIP_RIGHT_ID, FLIP_X);
 		}
 
 		if (ship_dx == 0 && ship_dy == 0)
